@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+generator clientjs {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  name          String
+  email         String   @unique
+  phone         String?
+  company       String?
+  package       PackageTier
+  message       String?
+  status        LeadStatus @default(NEW)
+  source        String      @default("website")
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  slug        String   @unique
+  title       String
+  category    String
+  description String
+  priceINR    Int
+  active      Boolean  @default(true)
+}
+
+model KPI {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  leads     Int      @default(0)
+  customers Int      @default(0)
+  arrINR    Int      @default(0)
+  revenueINR Int     @default(0)
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  WON
+  LOST
+}
+
+enum PackageTier {
+  BRONZE
+  SILVER
+  GOLD
+  ENTERPRISE
+}
